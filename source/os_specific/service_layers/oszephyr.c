@@ -967,7 +967,7 @@ UINT64
 AcpiOsGetTimer (
     void)
 {
-    return (k_cycle_get_64 ());
+    return acpi_timer_get();
 }
 
 
