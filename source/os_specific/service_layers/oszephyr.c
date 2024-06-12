@@ -805,7 +805,7 @@ AcpiOsMapMemory (
     uint8_t                 *VirtlAdd;
 
     LOG_DBG ("");
-    mm_memmap_phys_bare_map (&VirtlAdd, Where, Length, K_MEM_PERM_RW);
+    k_mem_map_phys_bare (&VirtlAdd, Where, Length, K_MEM_PERM_RW);
     return ((void *) VirtlAdd);
 }
 #endif
@@ -831,7 +831,7 @@ AcpiOsUnmapMemory (
     ACPI_SIZE               Length)
 {
     LOG_DBG ("");
-    mm_memmap_phys_bare_unmap (Where, Length);
+    k_mem_unmap_phys_bare (Where, Length);
 }
 
 
