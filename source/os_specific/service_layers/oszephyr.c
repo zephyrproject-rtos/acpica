@@ -576,35 +576,37 @@ AcpiOsWritePciConfiguration (
     UINT64                  Value,
     UINT32                  Width)
 {
-    UINT32                  value32;
-    pcie_bdf_t              bdf = PCIE_BDF (PciId->Bus, PciId->Device, PciId->Function);
+    UINT32                     value32;
+    const struct pcie_endpoint ep = {
+        .bdf = PCIE_BDF (PciId->Bus, PciId->Device, PciId->Function),
+    };
 
 
     switch (Width)
     {
     case 8:
 
-        value32 = pcie_conf_read (bdf, Register);
+        value32 = pcie_conf_read (&ep, Register);
         value32 = (value32 & 0xffffff00) | (UINT8) Value;
-        pcie_conf_write (bdf, Register, value32);
+        pcie_conf_write (&ep, Register, value32);
         break;
 
     case 16:
 
-        value32 = pcie_conf_read (bdf, Register);
+        value32 = pcie_conf_read (&ep, Register);
         value32 = (value32 & 0xffff0000) | (UINT16) Value;
-        pcie_conf_write (bdf, Register, value32);
+        pcie_conf_write (&ep, Register, value32);
         break;
 
     case 32:
 
-        pcie_conf_write (bdf, Register, (UINT32) Value);
+        pcie_conf_write (&ep, Register, (UINT32) Value);
         break;
 
     case 64:
 
-        pcie_conf_write (bdf, Register, (UINT32) Value);
-        pcie_conf_write (bdf, (Register + 4), (UINT32) (Value >> 32));
+        pcie_conf_write (&ep, Register, (UINT32) Value);
+        pcie_conf_write (&ep, (Register + 4), (UINT32) (Value >> 32));
         break;
 
     default:
@@ -639,29 +641,31 @@ AcpiOsReadPciConfiguration (
     UINT32                  Width)
 {
 
-    pcie_bdf_t bdf = PCIE_BDF (PciId->Bus, PciId->Device, PciId->Function);
+    const struct pcie_endpoint ep = {
+        .bdf = PCIE_BDF (PciId->Bus, PciId->Device, PciId->Function),
+    };
 
     switch (Width)
     {
     case 8:
 
-        *((UINT8 *) Value) = (UINT8) pcie_conf_read (bdf, Register);
+        *((UINT8 *) Value) = (UINT8) pcie_conf_read (&ep, Register);
         break;
 
     case 16:
 
-        *((UINT16 *) Value) = (UINT16) pcie_conf_read (bdf, Register);
+        *((UINT16 *) Value) = (UINT16) pcie_conf_read (&ep, Register);
         break;
 
     case 32:
 
-        *((UINT32 *) Value) = (UINT32) pcie_conf_read (bdf, Register);
+        *((UINT32 *) Value) = (UINT32) pcie_conf_read (&ep, Register);
         break;
 
     case 64:
 
-        *((UINT32 *) Value) = (UINT32) pcie_conf_read (bdf, Register);
-        *((UINT32 *) Value + 1) = (UINT32) pcie_conf_read (bdf, (Register + 4));
+        *((UINT32 *) Value) = (UINT32) pcie_conf_read (&ep, Register);
+        *((UINT32 *) Value + 1) = (UINT32) pcie_conf_read (&ep, (Register + 4));
         break;
 
     default:
